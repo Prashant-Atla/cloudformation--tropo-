@@ -1,0 +1,86 @@
+globals:
+  description: "Service VPC - used for services"
+  metadata: { "Build": "development",
+        "DependsOn": [],
+        "Environment": "ApiDev",
+        "Revision": "develop",
+        "StackName": "ApiDev-Dev-VPC",
+        "StackType": "InfrastructureResource",
+        "TemplateBucket": "cfn-apidev",
+        "TemplateName": "VPC",
+        "TemplatePath": "ApiDev/Dev/VPC"}
+
+template:
+
+  Bastionsg:
+    Environment: "ApiDev"
+    Name: "ApiDev-Dev-VPC-Bastion-SG"
+    Owner: "Foo industries"
+    Service: "ServiceVPC"
+    VPC: "Dev"
+  vpc:
+    CidrBlock: "10.0.0.0/16"
+    EnableDnsHostnames: true
+    EnableDnsSupport: true
+    InstanceTenancy: "default"
+    Tags:  
+      Environment: "ApiDev"
+      Name: "ApiDev-Dev-ServiceVPC"
+      Owner: "Foo industries"
+      Service: "ServiceVPC"
+      VPC: "Dev"
+  Internetgateway:
+    Tags:  
+      Environment: "ApiDev"
+      Name: "ApiDev-Dev-InternetGateway"
+      Owner: "Foo industries"
+      Service: "ServiceVPC"
+      VPC: "Dev"
+  DhcpOptions:
+    Tags:  
+      Environment: "ApiDev"
+      Name: "ApiDev-Dev-DhcpOptions"
+      Owner: "Foo industries"
+      Service: "ServiceVPC"
+      VPC: "Dev"
+  Cloudwatchalarmtopic:
+      TopicName: "ApiDev-Dev-CloudWatchAlarms"
+  NatEmergencyTopic:  
+      TopicName: "ApiDev-Dev-NatEmergencyTopic"
+  vpcNetworkAcl:
+    Tags:  
+      Environment: "ApiDev"
+      Name: "ApiDev-Dev-NetworkAcl"
+      Owner: "Foo industries"
+      Service: "ServiceVPC"
+      VPC: "Dev"
+    VpcNetworkaclinboundpublic80:
+      CidrBlock: "0.0.0.0/0"
+      Egress: "false"
+      Protocol: "6"
+      To_port: "80"
+      From_port: "80"
+      RuleAction: "allow"
+      RuleNumber: 20000
+    VpcNetworkaclinboundpublic443:
+      CidrBlock: "0.0.0.0/0"
+      Egress: "false"
+      Protocol: "6"
+      To_port: "443"
+      From_port: "443"
+      RuleAction: "allow"
+      RuleNumber: 20001
+    VpcNetworkacloutboundrule:
+      CidrBlock: "0.0.0.0/0"
+      Egress: "true"
+      Protocol: "-1"
+      RuleAction: "allow"
+      RuleNumber: 30000
+    VpcNetworkaclssh:
+      CidrBlock: "127.0.0.1/32"
+      Egress: "false"
+      Protocol: "6"
+      To_port: "22"
+      From_port: "22"
+      RuleAction: "allow"
+      RuleNumber: 10000

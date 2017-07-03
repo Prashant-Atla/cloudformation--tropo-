@@ -1,0 +1,5 @@
+troposphere
+docopt
+boto==2.42.0
+boto3==1.3.1
+PyYAML==3.11
