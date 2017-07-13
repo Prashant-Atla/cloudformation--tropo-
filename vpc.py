@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
-from troposphere import Template, Ref, Output, Join, GetAtt, Parameter, Tags
+from troposphere import Ref, Output, Join, Tags
 import troposphere.ec2 as ec2
 import troposphere.sns as sns
 
 
-class Vpca:
+class VPCCreator:
     def __init__(self, template_args):
         self.resources = []
         self.outputs = []
@@ -22,19 +22,16 @@ class Vpca:
             self.create_internet_gateway(
                 template_args['template']['Internetgateway'])
         if 'DhcpOptions' in template_args['template']:
-            self.create_Dhcp_options(template_args['template']['DhcpOptions'])
-        if 'vpcDhcpOptionsAsso' in template_args['template']:
-            self.create_Dhcp_options_ass(
-                template_args['template']['vpcDhcpOptionsAsso'])
+            self.create_dhcp_options(template_args['template']['DhcpOptions'])
         if 'Cloudwatchalarmtopic' in template_args['template']:
-            self.create_Cloud_watch_Alarm_Topic(
+            self.create_cloud_watch_alarm_topic(
                 template_args['template']['Cloudwatchalarmtopic'])
         if 'NatEmergencyTopic' in template_args['template']:
-            self.create_Nat_Emergency_Topic(
+            self.create_nat_emergency_topic(
                 template_args['template']['NatEmergencyTopic'])
         if 'vpcNetworkAcl' in template_args['template']:
-            self.create_network_Acl(template_args['template']['vpcNetworkAcl'])
-        self.create_Dhcp_options_ass()
+            self.create_network_acl(template_args['template']['vpcNetworkAcl'])
+        self.create_dhcp_options_assocition()
 
     def create_bsg(self, bsg_arg):
         self.Bsg = self.add_resource(ec2.SecurityGroup(
@@ -93,7 +90,7 @@ class Vpca:
             Value=Ref(self.internet_gateway)
         ))
 
-    def create_Dhcp_options(self, dhcp_arg):
+    def create_dhcp_options(self, dhcp_arg):
         self.dhcp_options = self.add_resource(
             ec2.DHCPOptions(
                 'DhcpOptions',
@@ -108,7 +105,7 @@ class Vpca:
                     VPC=dhcp_arg['Tags']['VPC'],
                     Name=dhcp_arg['Tags']['Name'])))
 
-    def create_Cloud_watch_Alarm_Topic(self, cwat_arg):
+    def create_cloud_watch_alarm_topic(self, cwat_arg):
 
         self.cloudwatchalarmtopic = self.add_resource(
             sns.Topic(
@@ -120,14 +117,14 @@ class Vpca:
             Value=Ref(self.cloudwatchalarmtopic)
         ))
 
-    def create_Dhcp_options_ass(self):
+    def create_dhcp_options_assocition(self):
         self.vpcdhcpoass = self.add_resource(ec2.VPCDHCPOptionsAssociation(
             "VpcDhcpOptionsAssociation",
             DhcpOptionsId=Ref(self.dhcp_options),
             VpcId=Ref(self.vpc),
         ))
 
-    def create_Nat_Emergency_Topic(self, naet_arg):
+    def create_nat_emergency_topic(self, naet_arg):
 
         self.natemergencytop = self.add_resource(sns.Topic(
             "NatEmergencyTopic",
@@ -138,7 +135,7 @@ class Vpca:
             Value=Ref(self.natemergencytop)
         ))
 
-    def create_network_Acl(self, acl_arg):
+    def create_network_acl(self, acl_arg):
 
         self.vpcnetworkacl = self.add_resource(ec2.NetworkAcl(
             "VpcNetworkAcl",

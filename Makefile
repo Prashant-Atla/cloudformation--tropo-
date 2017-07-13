@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 Run:
 	apt-get install -y python-pip
-	mkdir deps/
+	mkdir dependencies/
 	pip install \
 		-r make_requirements.txt \
 		--target dependencies/

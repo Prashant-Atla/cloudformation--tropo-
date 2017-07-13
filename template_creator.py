@@ -17,9 +17,8 @@ import json
 from docopt import docopt
 import yaml
 
-from troposphere import Parameter, Output, Ref, Template
-from troposphere import Base64, FindInMap, GetAtt
-from vpc import Vpca
+from troposphere import Template
+from vpc import VPCCreator
 
 
 class Cloudformation:
@@ -32,7 +31,7 @@ class Cloudformation:
         self.template = Template()
         self.template.description = self.globals.get('description', '')
         self.template.metadata = self.globals.get('metadata', '')
-        self.vpc = Vpca(config_dictionary)
+        self.vpc = VPCCreator(config_dictionary)
 
         for resource in self.vpc.resources:
             self.template.add_resource(resource)
