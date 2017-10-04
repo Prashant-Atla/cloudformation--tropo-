@@ -3,7 +3,7 @@
 #####################################################################################################################
 - Pre-requisits 
   Please permissions for the file
-	-command `chmod -R 777 viaplay task`
+	-command `chmod -R 777 cloudformationtropo`
 
 - Requirements
 
